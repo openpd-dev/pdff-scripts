@@ -18,6 +18,8 @@ class PDBManipulator(object):
         line = self._readNoAtom(line)
         line = self._readATOM(line, end_label)
         self._setPDBInfo()
+        self.sortAtomId()
+        self.sortResId()
         
     def _skipBlankLine(self, line):
         while line.startswith('\n') or line.startswith('#'):
@@ -220,7 +222,7 @@ class PDBManipulator(object):
     def addPatch(self, res_id, patch_name):
         if not patch_name in self.patches:
             raise KeyError('Patch %s are not supported')
-        
+
         print('Info) Start to add patch %s' %(patch_name))
         atom_indexes = [i[0] for i in np.argwhere(self.res_id == res_id)]
         atom_name = [self.atom_name[i] for i in atom_indexes]
@@ -275,9 +277,19 @@ class PDBManipulator(object):
         print('Info) Patch %s has been added successfully\n' %(patch_name))
 
     def moveBy(self, move_vec):
+        move_vec = np.array(move_vec)
         for atom in range(self.num_atoms):
-            self.coord[atom] += move_vec
+            self.coord[atom, :] += move_vec
             self.line_ATOM[atom] = self._replaceATOMLineCoord(self.line_ATOM[atom], self.coord[atom, :])
+
+    def getCenterOfMass(self):
+        tot_mass = 0
+        center_of_mass = np.zeros(3)
+        for atom in range(self.num_atoms):
+            tot_mass += self.mass[atom]
+            center_of_mass += self.mass[atom] * self.coord[atom, :]
+        self.center_of_mass = center_of_mass/tot_mass
+        return self.center_of_mass
 
     def writeNewFile(self, file_name):
         with open(file_name, 'w') as io:
