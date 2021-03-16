@@ -4,10 +4,13 @@ from .. import RecipeTorsion
 cur_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 forcefield_dir = os.path.join(cur_dir, '../forcefield/amberff14sb')
 
-class TestScriptEqNVT:
+class TestRecipeTorsion:
     def setup(self):
         self.recipe = RecipeTorsion(
-            save_dir=os.path.join(cur_dir, 'output/testRecipe')
+            save_dir=os.path.join(cur_dir, 'output/testRecipeTorsion'),
+            forcefield_file=os.path.join(forcefield_dir, 'protein.ff14SB_torsion.xml'),
+            model_name='PDFF alpha helix validation', cuda_id=0,
+            peptide1='ASN', peptide2='TYR'
         )
 
     def teardown(self):
@@ -21,3 +24,15 @@ class TestScriptEqNVT:
 
     def test_createDirs(self):
         self.recipe.createDirs()
+
+    def test_createStrFiles(self):
+        self.recipe.createDirs()
+        self.recipe.createStrFiles()
+
+    def test_createSimulationFiles(self):
+        self.recipe.createDirs()
+        self.recipe.createStrFiles()
+        self.recipe.createSimulationFiles()
+
+    def test_runRecipe(self):
+        self.recipe.runRecipe()
