@@ -225,11 +225,12 @@ class PDBManipulator(object):
                 self.line_ATOM[i] = self._replaceATOMLineResId(self.line_ATOM[i], cur_order)
         self.num_res = self.res_id[-1]
     
-    def addPatch(self, res_id, patch_name):
+    def addPatch(self, res_id, patch_name, is_verbose=False):
         if not patch_name in self.patches:
             raise KeyError('Patch %s are not supported')
 
-        print('Info) Start to add patch %s' %(patch_name))
+        if is_verbose:
+            print('Info) Start to add patch %s' %(patch_name))
         atom_indexes = [i[0] for i in np.argwhere(self.res_id == res_id)]
         atom_name = [self.atom_name[i] for i in atom_indexes]
         res_name = self.res_name[atom_indexes[0]]
@@ -239,10 +240,12 @@ class PDBManipulator(object):
         for patch_atom in patch['PatchAtoms']:
             if patch_atom in atom_name:
                 num_matched_atoms += 1
-                print('Info) Atom %s of Patch %s has already existed in Residue %s' %(patch_atom, patch_name, res_name))
+                if is_verbose:
+                    print('Info) Atom %s of Patch %s has already existed in Residue %s' %(patch_atom, patch_name, res_name))
         if num_matched_atoms != 0:
             if num_matched_atoms == len(patch['PatchAtoms']):
-                print('Info) Patch %s has already existed, all atoms are matched\n' %(patch_name))
+                if is_verbose:
+                    print('Info) Patch %s has already existed, all atoms are matched\n' %(patch_name))
                 return
             else:
                 raise KeyError('Error) Parts of atoms of patch %s are in Residue %s ID=%d, please check patches or residue' %(patch_name, res_name, res_id))
@@ -251,7 +254,8 @@ class PDBManipulator(object):
         label_index = atom_indexes[atom_name.index(patch['LabelAtom'])]
         patch_res_id = res_id
         for (i, atom) in enumerate(patch['PatchAtoms']):
-            print('Info) Add Atom %s' %(atom))
+            if is_verbose:
+                print('Info) Add Atom %s' %(atom))
             index = atom_indexes[-1] + i + 1
             coord = self.coord[parent_index] + np.random.rand(3)*2 - 1
             self._insertATOMLine(atom_indexes[-1]+i+1, patch['PatchLines'][i] 
@@ -268,7 +272,8 @@ class PDBManipulator(object):
         atom_indexes = [i[0] for i in np.argwhere(self.res_id == res_id)]
         atom_name = [self.atom_name[i] for i in atom_indexes]
         for atom in patch['DeleteAtoms']:
-            print('Info) Delete Atom %s' %(atom))
+            if is_verbose:
+                print('Info) Delete Atom %s' %(atom))
             index = atom_indexes[atom_name.index(atom)]
             self.atom_id = np.delete(self.atom_id, index)
             del self.atom_name[index]
@@ -280,7 +285,8 @@ class PDBManipulator(object):
             del self.raw_data[index]
             del self.line_ATOM[index]
             self.num_atoms -= 1
-        print('Info) Patch %s has been added successfully\n' %(patch_name))
+        if is_verbose:
+            print('Info) Patch %s has been added successfully\n' %(patch_name))
 
     def moveBy(self, move_vec):
         move_vec = np.array(move_vec)
