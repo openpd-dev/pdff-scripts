@@ -28,7 +28,7 @@ path_out_log = path_current + '/../output/log_files'
 sim_temp_start = 1
 sim_temp_end = 300
 # time
-sim_time_single = 10 * unit.picoseconds # Single equlibrium trajectory in heating paradigm
+sim_time_single = 10 * unit.picoseconds # Single equilibrium trajectory in heating paradigm
 sim_interval = 1 * unit.femtoseconds
 # step
 sim_steps = 5000000
@@ -45,7 +45,7 @@ out_prefix = 'heating_nvt'
 pdb = app.PDBFile(path_out_pdb + '/min_restart.pdb')
 
 ## Setting Simulation
-# In heating paradgim, system, integrator will be changed periodiclly, 
+# In the heating paradigm, system, integrator will be changed periodically, 
 # which is not including in `Setting Simulation` part, rather in `Run` part
 # Forcefiled
 forcefield = app.ForceField('{:<}', 'amber14/tip3pfb.xml')
@@ -74,10 +74,10 @@ print('Start heating system from %.2f K to %.2f K\\n' %(sim_temp_start, sim_temp
 print('%d simulations of %d steps (%.2f ps) will be performed' %(num_iters, sim_steps_single, sim_time_single/unit.picosecond))
 
 for temp in np.arange(sim_temp_start, sim_temp_end+1, sim_temp_diff/num_iters): 
-    # Commented codes are only used while heating system in NPT ensmble
+    # Commented codes are only used while heating system in NPT ensemble
     print('\\nHeating system at %.2f K. \\n' %temp)  
     # System
-    system = forcefield.createSystem(pdb.topology, nonbondedMethod=app.PME,nonbondedCutoff=sim_cutoff, 
+    system = forcefield.createSystem(pdb.topology, nonbondedMethod=app.PME, nonbondedCutoff=sim_cutoff, 
                 constraints=app.HAngles, ewaldErrorTolerance=0.0005)
     #barostat = openmm.MonteCarloBarostat(sim_pres, sim_temp_start*unit.kelvin, 1000)
     #system.addForce(barostat)
@@ -123,6 +123,6 @@ class ScriptHeatingNVT(Script):
         super().__init__(save_dir, model_name, forcefield_file, cuda_id=cuda_id)
         self.file_name = file_name
         self.context = context.format(
-            self.model_name, str(datetime.datetime.now()), 
+            self.model_name, str(datetime.datetime.now().replace(microsecond=0)), 
             self.forcefield_file, self.cuda_id
         )

@@ -87,7 +87,7 @@ class ScriptMinimize(Script):
         super().__init__(save_dir, model_name, forcefield_file, cuda_id=cuda_id)
         self.file_name = file_name
         self.context = context.format(
-            self.model_name, str(datetime.datetime.now()), 
+            self.model_name, str(datetime.datetime.now().replace(microsecond=0)), 
             self.forcefield_file, self.cuda_id
         )
 

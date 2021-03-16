@@ -10,3 +10,4 @@ class Script:
     def writeFile(self):
         f = open(os.path.join(self.save_dir, self.file_name), 'w')
         print(self.context, file=f)
+        f.close()
