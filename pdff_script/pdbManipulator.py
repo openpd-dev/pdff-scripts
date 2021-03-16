@@ -1,6 +1,7 @@
 import os, codecs, json
-import numpy as np 
-from . import ELEMENT_MASS
+import numpy as np
+from numpy.testing._private.utils import raises 
+from . import MASS_DICT
 
 cur_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 template_dir = os.path.join(cur_dir, 'template/patch')
@@ -76,28 +77,28 @@ class PDBManipulator(object):
         return line
 
     def _getMass(self, atom_name):
-        keys = ELEMENT_MASS.keys()
+        keys = MASS_DICT.keys()
         atom_name = atom_name.upper()
         if len(atom_name) >= 2:
             if atom_name[0:2] in keys:
-                return ELEMENT_MASS[atom_name[0:2]]
+                return MASS_DICT[atom_name[0:2]]
             elif atom_name[0] in keys:
-                return ELEMENT_MASS[atom_name[0]]
+                return MASS_DICT[atom_name[0]]
             else:
                 raise KeyError('Atom %s or Atom %s is not in element_mass %s: ' 
                         %(atom_name[0:2], atom_name[0], keys))
         else:
             if atom_name[0] in keys:
-                return ELEMENT_MASS[atom_name[0]]
+                return MASS_DICT[atom_name[0]]
             else:
                 raise KeyError('Atom %s is not in element_mass %s: ' 
                         %(atom_name[0], keys))
                     
     def _setPDBInfo(self):
         self.num_atoms = len(self.raw_data)
-        self.atom_id = np.ones([self.num_atoms, 1], int)
-        self.res_id = np.ones([self.num_atoms, 1], int)
-        self.mass = np.ones([self.num_atoms, 1])
+        self.atom_id = np.ones(self.num_atoms, int)
+        self.res_id = np.ones(self.num_atoms, int)
+        self.mass = np.ones(self.num_atoms)
         self.coord = np.ones([self.num_atoms, 3])
         self.atom_name = []
         self.res_name = []
@@ -110,10 +111,15 @@ class PDBManipulator(object):
             self.res_id[i] = int(data[4])
             self.coord[i, :] = data[5:8]
             self.mass[i] = self._getMass(data[1])
-            self.raw_data[i].append(self.mass[i][0])
+            self.raw_data[i].append(self.mass[i])
         self.num_res = np.unique(self.res_id).shape[0]
         self.num_atoms = len(self.atom_name)
-    
+
+    def _replaceATOMLineChainName(self, line, chain_name: str):
+        if len(chain_name) != 1:
+            raise ValueError('The length of chain name should be 1')
+        return (line[:21] + '%1s' %(chain_name) + line[22:])
+
     def _replaceATOMLineResName(self, line, res_name):
         return (line[:17] + '%3s' %(res_name) + line[20:])
 
@@ -197,7 +203,7 @@ class PDBManipulator(object):
         for (i, line) in enumerate(self.line_ATOM[:-1]):
             line = self._replaceATOMLineResName(line, self.res_name[i])
             line = self._replaceATOMLineAtomName(line, self.atom_name[i])
-            line = self._replaceATOMLineResId(line, self.res_id[i][0])
+            line = self._replaceATOMLineResId(line, self.res_id[i])
             self.line_ATOM[i] = line
 
     def sortAtomId(self):
@@ -206,18 +212,18 @@ class PDBManipulator(object):
             self.line_ATOM[atom] = self._replaceATOMLineAtomId(self.line_ATOM[atom], atom)
 
     def sortResId(self):
-        cur_res = self.res_id[0][0]
+        cur_res = self.res_id[0]
         cur_order = 0
         for i, res_id in enumerate(self.res_id):
-            if res_id[0] == cur_res:
-                self.res_id[i][0] = cur_order
+            if res_id == cur_res:
+                self.res_id[i] = cur_order
                 self.line_ATOM[i] = self._replaceATOMLineResId(self.line_ATOM[i], cur_order)
             else:
-                cur_res = res_id[0]
+                cur_res = res_id
                 cur_order += 1
-                self.res_id[i][0] = cur_order
+                self.res_id[i] = cur_order
                 self.line_ATOM[i] = self._replaceATOMLineResId(self.line_ATOM[i], cur_order)
-        self.num_res = self.res_id[-1][0]
+        self.num_res = self.res_id[-1]
     
     def addPatch(self, res_id, patch_name):
         if not patch_name in self.patches:
@@ -290,6 +296,43 @@ class PDBManipulator(object):
             center_of_mass += self.mass[atom] * self.coord[atom, :]
         self.center_of_mass = center_of_mass/tot_mass
         return self.center_of_mass
+
+    def setChainNameByResId(self, res_id, target_chain_name):
+        indexes = [index for index, value in enumerate(self.res_id) if value == res_id]
+        for index in indexes:
+            self.chain_name[index] = target_chain_name
+            self.line_ATOM[index] = self._replaceATOMLineChainName(self.line_ATOM[index], target_chain_name)
+
+    def setResIdByResId(self, res_id, target_res_id):
+        if target_res_id - res_id == 1 or res_id - target_res_id == 1:
+            raise Warning('The distance between res_id and target_res_id is 1, which blur the distinction between neighbor residues')
+        indexes = [index for index, value in enumerate(self.res_id) if value == res_id]
+        for index in indexes:
+            self.res_id[index] = target_res_id
+            self.line_ATOM[index] = self._replaceATOMLineResId(self.line_ATOM[index], target_res_id)
+
+    def catManipulator(self, manipulator):
+        # Combine data
+        # self.num_atoms = len(self.raw_data)
+        # self.atom_id = np.ones([self.num_atoms, 1], int)
+        # self.res_id = np.ones([self.num_atoms, 1], int)
+        # self.mass = np.ones([self.num_atoms)
+        # self.coord = np.ones([self.num_atoms, 3])
+        # self.atom_name = []
+        # self.res_name = []
+        # self.chain_name = []
+        # self.atom_id[i] = int(data[0])
+        # self.atom_name.append(data[1])
+        # self.res_name.append(data[2])
+        # self.chain_name.append(data[3])
+        # self.res_id[i] = int(data[4])
+        # self.coord[i, :] = data[5:8]
+        # self.mass[i] = self._getMass(data[1])
+        # self.raw_data[i].append(self.mass[i][0])
+        self.atom_id = np.hstack(self.atom_id, manipulator.atom_id + self.atom_id[-1])
+        self.atom_name.extend(manipulator.atom_name)
+        self.res_name.extend(manipulator.res_name)
+        # Fix Atom Line
 
     def writeNewFile(self, file_name):
         with open(file_name, 'w') as io:
