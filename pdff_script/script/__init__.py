@@ -10,11 +10,13 @@ from .scriptHeatingNVT import ScriptHeatingNVT
 from .scriptEqNVT import ScriptEqNVT
 from .scriptEqNPT import ScriptEqNPT
 from .scriptSamplingTorsion import ScriptSamplingTorsion
+from .scriptSamplingNonBonded import ScriptSamplingNonBonded
 
 __all__ = [
     'ScriptMinimize',
     'ScriptHeatingNVT',
     'ScriptEqNVT',
     'ScriptEqNPT',
-    'ScriptSamplingTorsion'
+    'ScriptSamplingTorsion',
+    'ScriptSamplingNonBonded'
 ]
