@@ -29,10 +29,10 @@ class TestRecipeTorsion:
         self.recipe.createDirs()
         self.recipe.createStrFiles()
 
-    def test_createSimulationFiles(self):
+    def test_createScriptFiles(self):
         self.recipe.createDirs()
         self.recipe.createStrFiles()
-        self.recipe.createSimulationFiles()
+        self.recipe.createScriptFiles()
 
     def test_runRecipe(self):
         self.recipe.runRecipe()
