@@ -3,6 +3,14 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Origin data
+origin_data/*
+
+# Ignore output file of test
+pdff_script/tests/output/*.py
+pdff_script/tests/output/*.pdb
+pdff_script/tests/output/*/*
+
 # Vscode
 .vscode/*
 
