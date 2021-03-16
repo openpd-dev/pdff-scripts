@@ -4,7 +4,7 @@ from . import Script
 context = """
 #########################################################
 ## Model: {:<45}##
-## Goal: Minimize system energy                        ##
+## Goal: Equilibrium system in NVT ensmble             ##
 ## Author: Zhenyu Wei                                  ##
 ## Date: {:<46}##
 ######################################################### 
