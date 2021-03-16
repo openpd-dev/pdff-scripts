@@ -84,8 +84,9 @@ class ScriptMinimize(Script):
         self, save_dir: str, model_name: str, forcefield_file: str, cuda_id: int,
         file_name='01_min.py'
     ) -> None:
-        super().__init__(save_dir, model_name, forcefield_file, cuda_id=cuda_id)
-        self.file_name = file_name
+        super().__init__(save_dir, model_name, file_name=file_name)
+        self.forcefield_file = forcefield_file
+        self.cuda_id = cuda_id
     
     def format_context(self):
         self.context = context.format(

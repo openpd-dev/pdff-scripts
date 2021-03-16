@@ -1,11 +1,10 @@
 import os
 
 class Script:
-    def __init__(self, save_dir: str, model_name: str, forcefield_file: str, cuda_id: int=0) -> None:
+    def __init__(self, save_dir: str, model_name: str, file_name: str) -> None:
         self.save_dir = save_dir
         self.model_name = model_name
-        self.forcefield_file = forcefield_file
-        self.cuda_id = cuda_id
+        self.file_name = file_name
 
     def format_context(self):
         raise NotImplementedError('format_context has not been overloaded')
