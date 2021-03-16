@@ -11,6 +11,7 @@ from .scriptEqNVT import ScriptEqNVT
 from .scriptEqNPT import ScriptEqNPT
 from .scriptSamplingTorsion import ScriptSamplingTorsion
 from .scriptSamplingNonBonded import ScriptSamplingNonBonded
+from .scriptShell import ScriptShell
 
 __all__ = [
     'ScriptMinimize',
@@ -18,5 +19,6 @@ __all__ = [
     'ScriptEqNVT',
     'ScriptEqNPT',
     'ScriptSamplingTorsion',
-    'ScriptSamplingNonBonded'
+    'ScriptSamplingNonBonded',
+    'ScriptShell'
 ]

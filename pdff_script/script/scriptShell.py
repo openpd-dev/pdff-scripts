@@ -38,4 +38,7 @@ class ScriptShell(Script):
         self.parent_id = parent_id
         
     def format_context(self):
-        pass 
+        self.context = context.format(
+            self.model_name, str(datetime.datetime.now().replace(microsecond=0)), 
+            self.parent_id
+        ) 
