@@ -92,7 +92,7 @@ sys.stdout = file_log
 log_reporter = app.StateDataReporter(sys.stdout, out_log_interval, step=True,
         potentialEnergy=True, kineticEnergy=True, totalEnergy=True,
         temperature=True, volume=True, speed=True, density=True,
-        totalSteps=sim_steps, remainingTime=True,separator='\t')
+        totalSteps=sim_steps, remainingTime=True,separator='\\t')
 # PDB reporter
 pdb_reporter = app.PDBReporter(path_out_pdb + '/' + out_prefix + '.pdb', out_pdb_interval, enforcePeriodicBox=True)
 
@@ -132,7 +132,7 @@ app.PDBFile.writeFile(simulation.topology, final_state.getPositions(), file_rest
 
 
 end_time = datetime.datetime.now()
-print('Total running time:', end='\t')
+print('Total running time:', end='\\t')
 print(end_time - start_time)
 
 file_restart.close()
