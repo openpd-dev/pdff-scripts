@@ -1,3 +1,15 @@
+#!/usr/bin/env python
+# -*-coding:utf-8 -*-
+'''
+file: recipe.py
+created time : 2021/03/16
+last edit time : 2021/03/17
+author : Zhenyu Wei 
+version : 1.0
+contact : zhenyuwei99@gmail.com
+copyright : (C)Copyright 2021-2021, Zhenyu Wei and Southeast University
+'''
+
 import os, shutil
 
 cur_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
