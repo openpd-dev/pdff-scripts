@@ -21,11 +21,13 @@ template_dir = os.path.join(cur_dir, '../template')
 
 class RecipeTorsion(Recipe):
     def __init__(
-        self, save_dir: str, model_name: str, cuda_id: int, peptide1: str, peptide2: str, 
-        solution: str='nacl_0.15mol', parent_id=0, forcefield_file: str='amber14/torsion.xml'
+        self, target_dir: str, model_name: str, cuda_id: int, peptide1: str, peptide2: str, 
+        solution: str='nacl_0.15mol', forcefield_file: str='amber14/torsion.xml'
     ) -> None:
-        super().__init__(save_dir, model_name, forcefield_file, cuda_id)
-        self.parent_id = parent_id
+        super().__init__(target_dir, model_name, forcefield_file, cuda_id)
+
+        _ = isStandardPeptide(peptide1, peptide2)
+        self.save_dir = os.path.join(self.target_dir, peptide1+'-'+peptide2)
         
         # Dir structure
         self.dir_tree = {
@@ -39,7 +41,6 @@ class RecipeTorsion(Recipe):
         }
 
         # Structure
-        _ = isStandardPeptide(peptide1, peptide2)
         self.peptide1 = PDBManipulator(os.path.join(template_dir, 'peptide', peptide1 + '.pdb'), end_label='ENDMDL')
         self.peptide2 = PDBManipulator(os.path.join(template_dir, 'peptide', peptide2 + '.pdb'), end_label='ENDMDL')
         self.solution = PDBManipulator(os.path.join(template_dir, 'solution', solution + '.pdb'), end_label='ENDMDL')
@@ -74,7 +75,7 @@ class RecipeTorsion(Recipe):
             ),
             ScriptShell(
                 save_dir=os.path.join(self.save_dir), 
-                model_name=self.model_name, parent_id=self.parent_id
+                model_name=self.model_name
             )
         ]
         
