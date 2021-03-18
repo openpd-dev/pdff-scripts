@@ -3,7 +3,7 @@
 '''
 file: recipe.py
 created time : 2021/03/16
-last edit time : 2021/03/17
+last edit time : 2021/03/18
 author : Zhenyu Wei 
 version : 1.0
 contact : zhenyuwei99@gmail.com
@@ -20,7 +20,8 @@ class Recipe:
     ) -> None:
         self.save_dir = save_dir
         self.model_name = model_name
-        self.forcefield_file = forcefield_file if 'forcefield/' in forcefield_file else os.path.join(forcefield_dir, forcefield_file)
+        self.forcefield_file_path = forcefield_file if 'forcefield/' in forcefield_file else os.path.join(forcefield_dir, forcefield_file)
+        self.forcefield_file_name = self.forcefield_file_path.split('/')[-1]
         self.cuda_id = cuda_id
 
     def _createDirsFromFileTree(self, parent_dir, dir_tree):
@@ -39,6 +40,7 @@ class Recipe:
         self._createDirsFromFileTree(self.save_dir, self.dir_tree)
 
     def createScriptFiles(self):
+        shutil.copyfile(self.forcefield_file_path, os.path.join(self.save_dir, 'simulation', self.forcefield_file_name))
         for script in self.script_recipe:
             script.writeFile()
 

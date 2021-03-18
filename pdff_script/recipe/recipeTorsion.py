@@ -3,7 +3,7 @@
 '''
 file: recipeTorsion.py
 created time : 2021/03/16
-last edit time : 2021/03/17
+last edit time : 2021/03/18
 author : Zhenyu Wei 
 version : 1.0
 contact : zhenyuwei99@gmail.com
@@ -48,28 +48,28 @@ class RecipeTorsion(Recipe):
         self.script_recipe = [
             ScriptMinimize(
                 save_dir=os.path.join(self.save_dir, 'simulation'), 
-                forcefield_file=self.forcefield_file,
+                forcefield_file=self.forcefield_file_name,
                 model_name=self.model_name, cuda_id=self.cuda_id
             ),
             ScriptHeatingNVT(
                 save_dir=os.path.join(self.save_dir, 'simulation'), 
-                forcefield_file=self.forcefield_file,
+                forcefield_file=self.forcefield_file_name,
                 model_name=self.model_name, cuda_id=self.cuda_id
             ),
             ScriptEqNPT(
                 save_dir=os.path.join(self.save_dir, 'simulation'), 
-                forcefield_file=self.forcefield_file,
+                forcefield_file=self.forcefield_file_name,
                 model_name=self.model_name, cuda_id=self.cuda_id
             ),
             ScriptEqNVT(
                 save_dir=os.path.join(self.save_dir, 'simulation'), 
-                forcefield_file=self.forcefield_file,
+                forcefield_file=self.forcefield_file_name,
                 model_name=self.model_name, cuda_id=self.cuda_id
             ),
             ScriptSamplingTorsion(
                 save_dir=os.path.join(self.save_dir, 'simulation'), 
                 pdb_file=os.path.join(self.save_dir, 'str/str.pdb'),
-                forcefield_file=self.forcefield_file,
+                forcefield_file=self.forcefield_file_name,
                 model_name=self.model_name, cuda_id=self.cuda_id
             ),
             ScriptShell(
