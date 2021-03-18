@@ -7,7 +7,7 @@ forcefield_dir = os.path.join(cur_dir, '../forcefield/amber14')
 class TestRecipeTorsion:
     def setup(self):
         self.recipe = RecipeTorsion(
-            save_dir=os.path.join(cur_dir, 'output/testRecipeTorsion'),
+            target_dir=os.path.join(cur_dir, 'output'),
             forcefield_file=os.path.join(forcefield_dir, 'torsion.xml'),
             model_name='PDFF alpha helix validation', cuda_id=0,
             peptide1='ASN', peptide2='TYR'
