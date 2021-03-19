@@ -19,6 +19,8 @@ class Recipe:
         self, target_dir: str, model_name: str, forcefield_file: str, cuda_id: int,
     ) -> None:
         self.target_dir = target_dir
+        self.save_dir = None
+        self.collect_dir = None
         self.model_name = model_name
         self.forcefield_file_path = forcefield_file if 'forcefield/' in forcefield_file else os.path.join(forcefield_dir, forcefield_file)
         self.forcefield_file_name = self.forcefield_file_path.split('/')[-1]

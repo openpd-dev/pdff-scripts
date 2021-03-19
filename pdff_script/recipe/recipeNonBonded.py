@@ -38,6 +38,7 @@ class RecipeNonBonded(Recipe):
                 'cv_files'
             }
         }
+        self.collect_dir = 'output/cv_files'
 
         # Structure
         self.peptide1 = PDBManipulator(os.path.join(template_dir, 'peptide', peptide1 + '.pdb'), end_label='ENDMDL')
