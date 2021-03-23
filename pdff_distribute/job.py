@@ -12,8 +12,8 @@ copyright : (C)Copyright 2021-2021, Zhenyu Wei and Southeast University
 
 import paramiko, os
 from ast import literal_eval
-from pdff_script.recipe import Recipe
-from pdff_script.device import Device
+from pdff_distribute.recipe import Recipe
+from pdff_distribute.device import Device
 
 class Job:
     def __init__(self, recipe: Recipe) -> None:
